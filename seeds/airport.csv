@@ -1,0 +1,9 @@
+AIRPORT_DOT_CODE,AIRPORT_NAME,AIRPORT_ALPHA_CODE,AIRPORT_WORLD_AREA_CODE,AIRPORT_CITY_NAME,STATE_GEO_ID,COUNTRY_GEO_ID
+32721,Larsen Bay Airport,KLN,1,Larsen Bay,geoId/02,country/USA
+57565,Miami International,MIA,33,Miami,geoId/12,country/USA
+87870,Tampa International,TPA,33,Tampa,geoId/12,country/USA
+30562,Mobile Regional,MOB,51,Mobile,geoId/01,country/USA
+72220,Portland International,PDX,92,Portland,geoId/41,country/USA
+72223,Maryland International,MDX,32,Maryland,geoId/43,country/USA
+12345,Chennai Intl Renamed,CNN,45,Chennai,geoId/33,country/IND
+

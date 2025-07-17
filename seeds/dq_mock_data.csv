@@ -1,0 +1,16 @@
+id,name,age,email,salary,joining_date
+1, John Doe , 45, john.doe@example.com , 70000,2024-06-12
+2,An@ Smith, forty, anasmith[at]email.com,80000,12/06/2024
+3,,22,sarah99@example.org,90000,2024/06/12
+4,Mike,105,mike@example.com,120000,06-12-2024
+5,Lisa,18,lisa..lee@example.com,50000,2024.06.12
+6,Bobbie,30,bobbie@example,55000,"June 12, 2024"
+7,Ella,thirtyfive,ella@example.com,65000,2024-06-12
+8,Ella,35,ella@example.com,65000,12-06-2024
+9,Mark,21,mark123@site.,70000,20240612
+10,Ankit,twentyone,ankit@example.com,,13/06/2024
+11,,19,,40000,2024/06/13
+12,ALICE,30,ALICE@EXAMPLE.COM,55000,06/13/2024
+13,Alice,30,alice@example.com,55000,13-Jun-2024
+14,Kyle)(),99,kyle@example.com,100000,"Jun 13, 2024"
+15,Bharghavi,27,bharghavi@@example.com,99999,13-06-2024

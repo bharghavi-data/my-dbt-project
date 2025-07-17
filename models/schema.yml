@@ -1,0 +1,714 @@
+version: 2
+
+models:
+  - name: my_first_dbt_model
+    description: "A starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+
+  - name: my_second_dbt_model
+    description: "Another starter dbt model"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+
+  - name: test_snowflake
+    description: "Model to validate the connectivity between Snowflake and dbt"
+    columns:
+      - name: current_user
+        description: "Current user in Snowflake"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_mock_data
+    description: "Cleaned staging data using macro"
+    columns:
+      - name: id
+        description: "The primary key"
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: "Cleansed name column"
+        tests:
+          - not_null
+      - name: age
+        description: "Cleansed and casted age column"
+      - name: email
+        description: "Cleansed email column"
+
+  - name: mock_vs_clean
+    description: "Side-by-side comparison of raw seed data vs cleansed staging model"
+    columns: []
+
+  - name: dq_mock_vs_clean
+    description: "Applies cleaning and DQ checks on dq_mock_data and marks records as CLEANED or FLAGGED."
+    columns:
+      - name: id
+        description: "Primary key of the record"
+      - name: name
+        description: "Cleaned and validated name"
+      - name: age
+        description: "Cleaned and validated age"
+      - name: email
+        description: "Cleaned and validated email"
+      - name: salary
+        description: "Cleaned and validated salary"
+      - name: dq_status
+        description: "Indicates whether the record passed all data quality checks"
+
+  - name: failed_records
+    description: "Summary table for failed DQ records"
+    columns: []
+
+  - name: stg_dq_mock_data
+    description: "Model that applies data quality checks on dq_mock_data using macros"
+    columns:
+      - name: id
+        description: "Primary key from the source data"
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Cleaned name column"
+      - name: age
+        description: "Cleaned age column cast to integer where possible"
+      - name: email
+        description: "Email address with basic pattern validation"
+      - name: salary
+        description: "Original salary field"
+      - name: dq_pass
+        description: "Indicates if the row passed all quality checks (Yes/No)"
+      - name: dq_reason
+        description: "List of reasons if the row failed data quality checks"
+
+  
+
+  - name: dq_status
+    description: "Model that removes duplicates and checks uniqueness"
+    columns: []
+
+  - name: stg_airport_source
+    description: "Raw airport data used as source for SCD2 logic"
+    columns: []
+
+  - name: airport_scd2
+    description: "SCD2 implementation tracking changes to airport data"
+    columns:
+      - name: AIRPORT_DOT_CODE
+        description: "Unique airport code used for tracking"
+        tests:
+          - not_null
+      - name: is_current
+        description: "Flag to indicate current version"
+      - name: valid_from
+        description: "Start of the version validity period"
+      - name: valid_to
+        description: "End of the version validity period"
+  - name: airport_scd2_auto
+    description: "SCD2 implementation tracking changes to airport data"
+  - name: profiling_summary
+    description: "Data Profiling"
+  - name: hub_aircraft_carrier
+    description: "Hub table capturing unique aircraft carrier business keys."
+    columns:
+      - name: aircraft_carrier_hk
+        description: "Hash key generated from AIRCRAFT_CARRIER_ID"
+        tests:
+          - unique
+          - not_null
+      - name: AIRCRAFT_CARRIER_ID
+        description: "The natural business key for aircraft carrier"
+        tests:
+          - not_null
+      - name: load_datetime
+        description: "Timestamp of when the record was loaded"
+      - name: record_source
+        description: "Source system identifier or invocation ID"
+
+  - name: sat_aircraft_carrier_attr
+    description: "Satellite table storing descriptive attributes of aircraft carriers."
+    columns:
+      - name: aircraft_carrier_hk
+        description: "Hash key linking to hub_aircraft_carrier"
+        tests:
+          - not_null
+      - name: hash_diff
+        description: "Hash of all descriptive fields for change detection"
+        tests:
+          - not_null
+      - name: CARRIER_NAME
+        description: "Name of the carrier"
+      - name: CARRIER_WORLD_AREA_CODE
+        description: "World area code of the carrier"
+      - name: CARRIER_TYPE
+        description: "Primary type of the carrier"
+      - name: OAI_CARRIER_TYPE
+        description: "Alternate carrier type as per OAI"
+      - name: load_datetime
+        description: "Timestamp when the data was captured"
+      - name: record_source
+        description: "Identifier for the data load or pipeline run"
+
+  - name: link_aircraft_carrier_location
+    description: "Link table connecting aircraft carriers to state and country geographies."
+    columns:
+      - name: aircraft_location_link_hk
+        description: "Hash key generated from aircraft + state + country keys"
+        tests:
+          - unique
+          - not_null
+      - name: aircraft_carrier_hk
+        description: "Hash key referencing hub_aircraft_carrier"
+        tests:
+          - not_null
+      - name: state_geo_hk
+        description: "Hash key referencing hub_state_geo (if implemented)"
+      - name: country_geo_hk
+        description: "Hash key referencing hub_country_geo (if implemented)"
+      - name: load_datetime
+        description: "Timestamp when this relationship was recorded"
+      - name: record_source
+        description: "Identifier for the data load or pipeline run"
+  - name: stg_sat_aircraft_carrier_cleaned
+    description: "Cleaned and transformed source data for satellite load from stg_aircraft_carrier_index."
+    columns:
+      - name: aircraft_carrier_hk
+        description: "Hash key of the aircraft carrier ID, cleaned and hashed"
+        tests:
+          - not_null
+          - unique
+
+      - name: CARRIER_NAME
+        description: "Cleaned carrier name"
+        tests:
+          - not_null
+
+      - name: CARRIER_WORLD_AREA_CODE
+        description: "World area code for the carrier, cleaned and cast to number"
+
+      - name: CARRIER_TYPE
+        description: "Cleaned type of the carrier"
+
+      - name: OAI_CARRIER_TYPE
+        description: "Cleaned OAI carrier type"
+ 
+  - name: customer_remediated_data
+    description: Final curated customer data containing.
+    columns:
+      - name: customer_id
+        description: Unique identifier for the customer.
+        tests:
+          - not_null
+          - unique
+
+      - name: name
+        description: Cleaned customer name after applying text normalization.
+
+      - name: age
+        description: Validated customer age;
+
+      - name: email
+        description: Customer email address validated for correct format.
+
+      - name: salary
+        description: Cleaned and validated salary, expected range
+
+      - name: joining_date
+        description: Cleaned joining date parsed from raw string to date format.
+
+      - name: last_updated
+        description: Timestamp from source indicating the last update of the record.
+      - name: hub_indicator
+        description: "Hub capturing unique indicators from FBI crime attributes."
+    columns:
+      - name: indicator_hk
+        description: "Hash key generated from cleaned VARIABLE"
+        tests:
+          - not_null
+          - unique
+      - name: cleaned_variable
+        description: "Cleaned and standardized variable name"
+        tests:
+          - not_null
+      - name: load_date
+        description: "Timestamp when the record was loaded"
+      - name: record_source
+        description: "Source table from which the record originated"
+      - name: dq_variable_check
+        description: "Data quality check for cleaned_variable"
+
+  - name: hub_location
+    description: "Hub capturing unique geographical locations from GEOGRAPHY_INDEX."
+    columns:
+      - name: location_hk
+        description: "Hash key generated from cleaned GEO_ID"
+        tests:
+          - not_null
+          - unique
+      - name: cleaned_geo_id
+        description: "Cleaned GEO_ID value"
+        tests:
+          - not_null
+      - name: load_date
+        description: "Timestamp when the record was loaded"
+      - name: record_source
+        description: "Source table from which the record originated"
+      - name: dq_geo_id_check
+        description: "Data quality check for cleaned_geo_id"
+
+  - name: link_location_indicator
+    description: "Link connecting indicator and location on a given observation date."
+    columns:
+      - name: location_indicator_hk
+        description: "Hash key of location + indicator + date"
+        tests:
+          - not_null
+          - unique
+      - name: location_hk
+        description: "Hash key from hub_location"
+        tests:
+          - not_null
+      - name: indicator_hk
+        description: "Hash key from hub_indicator"
+        tests:
+          - not_null
+      - name: cleaned_geo_id
+        description: "Cleaned GEO_ID used in join"
+      - name: cleaned_variable
+        description: "Cleaned VARIABLE used in join"
+      - name: observation_date
+        description: "Observation date"
+        tests:
+          - not_null
+      - name: load_date
+        description: "Timestamp when the link was created"
+      - name: record_source
+        description: "Data source of the link relationship"
+      - name: dq_geo_check
+        description: "DQ check for GEO_ID"
+      - name: dq_var_check
+        description: "DQ check for VARIABLE"
+      - name: dq_date_check
+        description: "DQ check for DATE"
+
+  - name: stg_observation_cleaned
+    description: "Raw satellite capturing observed values and units from time series data."
+    columns:
+      - name: location_indicator_hk
+        description: "Link hash key (location + indicator + date)"
+        tests:
+          - not_null
+      - name: observation_date
+        description: "Observation date"
+        tests:
+          - not_null
+      - name: observation_value
+        description: "Reported value"
+        tests:
+          - not_null
+      - name: unit
+        description: "Unit of the reported value"
+      - name: load_date
+        description: "Timestamp of loading"
+      - name: record_source
+        description: "Source system"
+      - name: dq_date_check
+        description: "DQ check for observation_date"
+      - name: dq_value_check
+        description: "DQ check for observation_value"
+
+  - name: sat_observation_cleaned
+    description: "Cleaned version of the observation satellite with standardized units."
+    columns:
+      - name: location_indicator_hk
+        description: "Link hash key"
+        tests:
+          - not_null
+      - name: observation_date
+        description: "Date of observation"
+      - name: observation_value
+        description: "Cleaned numeric value"
+      - name: standardized_unit
+        description: "Standardized unit"
+        tests:
+          - not_null
+      - name: cleaned_load_date
+        description: "Load time for cleaned record"
+      - name: record_source
+        description: "Source label for cleaning step"
+      - name: dq_unit_check
+        description: "DQ check for standardized unit"
+
+  - name: observation_raw_view
+    description: "Final view combining raw satellite and link with hub-level attributes."
+    columns:
+      - name: geo_id
+        description: "Business key from hub_location"
+      - name: variable
+        description: "Business key from hub_indicator"
+      - name: location_indicator_hk
+        description: "Hash key linking all keys"
+      - name: observation_date
+        description: "Observation timestamp"
+      - name: observation_value
+        description: "Observed value"
+      - name: unit
+        description: "Unit from raw satellite"
+      - name: link_load_date
+        description: "Link table load timestamp"
+      - name: sat_load_date
+        description: "Satellite load timestamp"
+      - name: link_source
+        description: "Record source of link"
+      - name: sat_source
+        description: "Record source of satellite"
+
+  - name: observation_cleaned_view
+    description: "Final view combining cleaned satellite and link with hub attributes."
+    columns:
+      - name: geo_id
+        description: "Business key from hub_location"
+      - name: variable
+        description: "Business key from hub_indicator"
+      - name: location_indicator_hk
+        description: "Hash key linking all entities"
+      - name: observation_date
+        description: "Date of observation"
+      - name: observation_value
+        description: "Final cleaned observation value"
+      - name: standardized_unit
+        description: "Cleaned and standardized unit"
+      - name: link_load_date
+        description: "Link record load time"
+      - name: sat_load_date
+        description: "Cleaned satellite load timestamp"
+      - name: link_source
+        description: "Record source of link"
+      - name: sat_source
+        description: "Record source of cleaned satellite"
+  - name: sat_observation_raw
+    description: "Raw satellite capturing observed values and units from time series data."
+  - name: stg_sat_observation_cleaned
+    description: "Cleaned satellite capturing observed values and units from time series data."
+  - name: stg_crime_cleansed
+    description: "Staging table combining RAW_STATISTICAL_OBSERVATIONS and RAW_INDICATOR_METADATA"
+    columns:
+      - name: variable
+        description: "Crime variable code"
+        tests: 
+          - not_null
+      - name: variable_name
+        description: "Name of the variable"
+      - name: offense_category
+        description: "Offense category for the crime"
+      - name: measure
+        description: "Measure type"
+      - name: frequency
+        description: "Frequency of data collection"
+      - name: unit
+        description: "Unit of the observation"
+      - name: observation_date
+        description: "Date of the observation"
+        tests:
+          - not_null
+      - name: observation_value
+        description: "Recorded crime value"
+      - name: geo_id
+        description: "Geographical identifier"
+        tests:
+          - not_null
+  - name: stg_crime_raw
+    description: "Staging table combining RAW_STATISTICAL_OBSERVATIONS and RAW_INDICATOR_METADATA"
+    columns:
+      - name: variable
+        description: "Crime variable code"
+        tests: 
+          - not_null
+      - name: variable_name
+        description: "Name of the variable"
+      - name: offense_category
+        description: "Offense category for the crime"
+      - name: measure
+        description: "Measure type"
+      - name: frequency
+        description: "Frequency of data collection"
+      - name: unit
+        description: "Unit of the observation"
+      - name: observation_date
+        description: "Date of the observation"
+        tests:
+          - not_null
+      - name: observation_value
+        description: "Recorded crime value"
+      - name: geo_id
+        description: "Geographical identifier"
+        tests:
+          - not_null
+
+
+  - name: hub_crime
+    description: "Hub table holding unique crime business keys"
+    columns:
+      - name: crime_hk
+        description: "Crime hash key"
+        tests: 
+          - unique
+          - not_null
+      - name: variable
+        description: "Crime variable code"
+      - name: offense_category
+        description: "Crime offense category"
+      - name: measure
+        description: "Measure type"
+      - name: load_date
+        description: "Date when the record was loaded"
+      - name: record_source
+        description: "Source system"
+
+  - name: sat_crime_cleansed
+    description: "Satellite table tracking SCD2 historical attributes of crime"
+    columns:
+      - name: crime_hk
+        description: "Hash key linking to hub_crime"
+        tests:
+          - not_null
+      - name: variable_name
+        description: "Crime variable name"
+      - name: offense_category
+        description: "Crime offense category"
+      - name: measure
+        description: "Measure type"
+      - name: frequency
+        description: "Frequency"
+      - name: unit
+        description: "Unit"
+      - name: observation_date
+        description: "Observation date"
+      - name: observation_value
+        description: "Crime value"
+      - name: valid_from
+        description: "Start of validity period"
+      - name: valid_to
+        description: "End of validity period"
+      - name: is_current
+        description: "Flag for current record version"
+  - name: sat_crime_raw
+    description: "Satellite table tracking SCD2 historical attributes of crime"
+    columns:
+      - name: crime_hk
+        description: "Hash key linking to hub_crime"
+        tests:
+          - not_null
+      - name: variable_name
+        description: "Crime variable name"
+      - name: offense_category
+        description: "Crime offense category"
+      - name: measure
+        description: "Measure type"
+      - name: frequency
+        description: "Frequency"
+      - name: unit
+        description: "Unit"
+      - name: observation_date
+        description: "Observation date"
+      - name: observation_value
+        description: "Crime value"
+      - name: valid_from
+        description: "Start of validity period"
+      - name: valid_to
+        description: "End of validity period"
+      - name: is_current
+        description: "Flag for current record version"
+
+  - name: stg_geo_cleansed
+    description: "Staging table cleaning and prepping geographic location data"
+    columns:
+      - name: geo_id
+        description: "Geographic identifier"
+        tests:
+          - not_null
+      - name: geo_name
+        description: "Name of the geography"
+      - name: iso_3166_2_code
+        description: "ISO code"
+      - name: iso_alpha2
+        description: "Alpha2 code"
+      - name: iso_alpha3
+        description: "Alpha3 code"
+      - name: iso_name
+        description: "ISO name"
+      - name: iso_numeric_code
+        description: "ISO numeric code"
+      - name: level
+        description: "Geographic level"
+  - name: stg_geo_raw
+    description: "Staging table cleaning and prepping geographic location data"
+    columns:
+      - name: geo_id
+        description: "Geographic identifier"
+        tests:
+          - not_null
+      - name: geo_name
+        description: "Name of the geography"
+      - name: iso_3166_2_code
+        description: "ISO code"
+      - name: iso_alpha2
+        description: "Alpha2 code"
+      - name: iso_alpha3
+        description: "Alpha3 code"
+      - name: iso_name
+        description: "ISO name"
+      - name: iso_numeric_code
+        description: "ISO numeric code"
+      - name: level
+        description: "Geographic level"
+
+
+  - name: hub_geo
+    description: "Hub table for unique geography business keys"
+    columns:
+      - name: geo_hk
+        description: "Hash key for geo"
+        tests:
+          - unique
+          - not_null
+      - name: geo_id
+        description: "Original geo ID"
+      - name: load_date
+        description: "Load timestamp"
+      - name: record_source
+        description: "Source system"
+
+  - name: sat_geo_cleansed
+    description: "Satellite for SCD2 on geography attributes"
+    columns:
+      - name: geo_hk
+        description: "Hash key linking to hub_geo"
+        tests:
+          - not_null
+      - name: geo_name
+        description: "Geographic name"
+      - name: iso_3166_2_code
+        description: "ISO code"
+      - name: iso_alpha2
+        description: "Alpha2"
+      - name: iso_alpha3
+        description: "Alpha3"
+      - name: iso_name
+        description: "ISO name"
+      - name: iso_numeric_code
+        description: "ISO numeric code"
+      - name: level
+        description: "Geographic level"
+      - name: valid_from
+        description: "Validity start"
+      - name: valid_to
+        description: "Validity end"
+      - name: is_current
+        description: "Current record indicator"
+  - name: sat_geo_raw
+    description: "Satellite for SCD2 on geography attributes"
+    columns:
+      - name: geo_hk
+        description: "Hash key linking to hub_geo"
+        tests:
+          - not_null
+      - name: geo_name
+        description: "Geographic name"
+      - name: iso_3166_2_code
+        description: "ISO code"
+      - name: iso_alpha2
+        description: "Alpha2"
+      - name: iso_alpha3
+        description: "Alpha3"
+      - name: iso_name
+        description: "ISO name"
+      - name: iso_numeric_code
+        description: "ISO numeric code"
+      - name: level
+        description: "Geographic level"
+      - name: valid_from
+        description: "Validity start"
+      - name: valid_to
+        description: "Validity end"
+      - name: is_current
+        description: "Current record indicator"
+
+  - name: link_crime_geo
+    description: "Link table connecting crime observations to geographic locations"
+    columns:
+      - name: crime_geo_link_hk
+        description: "Hash key for the link"
+        tests:
+          - unique
+          - not_null
+      - name: crime_hk
+        description: "Crime hash key"
+        tests:
+          - not_null
+      - name: geo_hk
+        description: "Geo hash key"
+        tests:
+          - not_null
+      - name: load_date
+        description: "Load date"
+      - name: record_source
+        description: "Source of the link" 
+  - name: raw_geo_relationships
+    description: "Raw geographic Reationships" 
+  - name: raw_indicator_metadata
+    description: "Metadata" 
+  - name: raw_location_index
+    description: "Raw geographic Index" 
+  - name: raw_statistical_observations
+    description: "Staistics" 
+
+  - name: mart_crime_geo_raw_vw
+    description: "Simple business view of raw crime and geography data"
+    columns:
+      - name: geo_name
+        description: "Geographic location name"
+      - name: geo_id
+        description: "Geographic identifier"
+      - name: variable_name
+        description: "Crime variable name"
+
+  - name: mart_crime_geo_cleansed_vw
+    description: "Simple business view of processed crime and geography data"
+    columns:
+      - name: geo_name
+        description: "Geographic location name (standardized)"
+      - name: geo_id
+        description: "Geographic identifier (processed)"
+      - name: variable_name
+        description: "Crime variable name (standardized)"
+
+  - name: stg_crime_dq_status
+    description: "DQ status"
+  - name: stg_crime_remediated
+    description: "Final Data"
+  - name: sat_crime_stats
+    description: "Final Data"
+
+  - name: sat_geo_dq_status
+    description: "DQ status"
+  - name: sat_geo_remediated
+    description: "Final Data"
+  - name: sat_geo_stats
+    description: "Final Data"
+  - name: remediated
+    description: "Medallion Demo"
+  - name: scd2_customer
+    description: "For Demo"
+  - name: remediated_customers
+    description: "For Demo Macro checking"

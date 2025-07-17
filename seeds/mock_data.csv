@@ -1,0 +1,6 @@
+id,name,age,email
+1, John , 25 , john@example.com
+2,, , JANE@EXAMPLE.COM
+3,Alice,30,Alice@EXAMPLE.COM
+4,  Bob@  ,abc,bob@@example..com
+5,    ,  45  ,  

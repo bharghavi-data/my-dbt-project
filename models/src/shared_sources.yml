@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: cybersyn            # Logical name 
+    database: GLOBAL_GOVERNMENT
+    schema: CYBERSYN
+    tables:
+      - name: AIRCRAFT_CARRIER_INDEX
+      - name: FBI_CRIME_ATTRIBUTES
+      - name: FBI_CRIME_TIMESERIES
+      - name: GEOGRAPHY_INDEX
+      - name: GEOGRAPHY_RELATIONSHIPS

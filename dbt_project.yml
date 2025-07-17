@@ -1,0 +1,90 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'dbt_data_guardian'
+version: '1.0.0'
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'dbt_data_guardian'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# In this example config, we tell dbt to build all models in the example/
+# directory as views. These settings can be overridden in the individual model
+# files using the `{{ config(...) }}` macro.
+models:
+  dbt_data_guardian:
+    +persist_docs:
+      relation: true
+      columns: true
+    # Config indicated by + and applies to all files under models/example/
+    sample:
+      +materialized: view
+    raw:
+      +materialized: view     # All models in models/raw/ will be views
+    staging:
+      +materialized: view     # All models in models/staging/ will be views
+    dq:
+      +materialized: view 
+      demo:
+        +materialized: table 
+    data_vault:
+        +materialized: table
+        hub:
+          +materialized: table
+        link:
+          +materialized: table
+        marts:
+          +materialized: view
+        sat:
+          +materialized: table
+seeds:
+  dbt_data_guardian:
+    mock_data:
+      column_types:
+        ID: varchar
+        NAME: varchar
+        AGE: varchar
+        EMAIL: varchar
+    dq_mock_data:
+      column_types:
+        ID: integer
+        NAME: string
+        AGE: string
+        EMAIL: string
+        SALARY: number
+    scd2_mock_data:
+      column_types:
+        CUSTOMER_ID: integer
+        NAME: string
+        AGE: string
+        EMAIL: string
+        SALARY: number
+        JOINING_DATE: string
+        LAST_UPDATED: timestamp
+    airport:
+      column_types:
+        AIRPORT_DOT_CODE: string
+        AIRPORT_NAME: string
+        AIRPORT_ALPHA_CODE: string
+        AIRPORT_WORLD_AREA_CODE: integer
+        AIRPORT_CITY_NAME: string
+        STATE_GEO_ID: string
+        COUNTRY_GEO_ID: string
