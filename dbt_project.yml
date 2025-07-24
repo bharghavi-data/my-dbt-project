@@ -1,16 +1,8 @@
-
-# Name your project! Project names should contain only lowercase characters
-# and underscores. A good package name should reflect your organization's
-# name or the intended use of these models
 name: 'dbt_data_guardian'
 version: '1.0.0'
 
-# This setting configures which "profile" dbt uses for this project.
 profile: 'dbt_data_guardian'
 
-# These configurations specify where dbt should look for different types of files.
-# The `model-paths` config, for example, states that models in this project can be
-# found in the "models/" directory. You probably won't need to change these!
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
@@ -18,43 +10,34 @@ seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
-clean-targets:         # directories to be removed by `dbt clean`
+clean-targets:
   - "target"
   - "dbt_packages"
 
-
-# Configuring models
-# Full documentation: https://docs.getdbt.com/docs/configuring-models
-
-# In this example config, we tell dbt to build all models in the example/
-# directory as views. These settings can be overridden in the individual model
-# files using the `{{ config(...) }}` macro.
 models:
   dbt_data_guardian:
     +persist_docs:
       relation: true
       columns: true
-    # Config indicated by + and applies to all files under models/example/
     sample:
       +materialized: view
     raw:
-      +materialized: view     # All models in models/raw/ will be views
+      +materialized: view
     staging:
-      +materialized: view     # All models in models/staging/ will be views
+      +materialized: view
     dq:
-      +materialized: view 
+      +materialized: view
       demo:
-        +materialized: table 
-    data_vault:
         +materialized: table
-        hub:
-          +materialized: table
-        link:
-          +materialized: table
-        marts:
-          +materialized: view
-        sat:
-          +materialized: table
+    data_vault__hub:
+      +materialized: table
+    data_vault__link:
+      +materialized: table
+    data_vault__sat:
+      +materialized: table
+    data_vault__marts:
+      +materialized: view
+
 seeds:
   dbt_data_guardian:
     mock_data:
