@@ -7,8 +7,7 @@ models:
       - name: id
         description: "The primary key for this table"
         tests:
-          - unique
-          - not_null
+          - validation_rules
 
 
   - name: my_second_dbt_model
@@ -20,7 +19,7 @@ models:
           - unique
           - not_null
 
-  - name: test_snowflake
+  - name: snowflake
     description: "Model to validate the connectivity between Snowflake and dbt"
     columns:
       - name: current_user
@@ -712,3 +711,36 @@ models:
     description: "For Demo"
   - name: remediated_customers
     description: "For Demo Macro checking"
+ 
+  - name: test_table
+    columns:
+      - name: USER_ID
+        tests:
+          - user_id_regex
+          - user_id_duplicate_check
+      - name: USER_MOBILE
+        tests:
+          - user_mobile_regex
+      - name: USER_NAME
+        tests:
+          - user_name_regex
+      - name: USER_ADDRESS
+        tests:
+          - user_address_regex
+      - name: USER_EMAIL
+        tests:
+          - user_email_regex
+      - name: USER_AGE
+        tests:
+          - user_age_regex
+      
+      - name: USER_CITY
+        tests:
+          - user_city_regex
+      - name: USER_COUNTRY
+        tests:
+          - user_country_regex
+  - name: dq_test_results_staging
+    description: "Staging of Data"
+  - name: dq_test_logs 
+    description: "Incremental Load  of DataLogs"

@@ -10,3 +10,8 @@ sources:
       - name: FBI_CRIME_TIMESERIES
       - name: GEOGRAPHY_INDEX
       - name: GEOGRAPHY_RELATIONSHIPS
+  - name: TESTINGFRAMEWORK_AI
+    database: DWH_HASTINGS_DATA_AI
+    schema: TESTINGFRAMEWORK_AI
+    tables:
+      - name: TEST_TABLE
