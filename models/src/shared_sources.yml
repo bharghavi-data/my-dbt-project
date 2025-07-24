@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: cybersyn            # Logical name 
+  - name: cybersyn            # Logical names 
     database: GLOBAL_GOVERNMENT
     schema: CYBERSYN
     tables:
