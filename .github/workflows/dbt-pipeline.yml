@@ -1,0 +1,39 @@
+name: Run dbt pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'  # Run every day at 3 AM UTC
+
+jobs:
+  run-dbt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13' 
+
+      - name: Install dbt
+        run: |
+          pip install dbt-core dbt-snowflake
+
+      - name: Run dbt
+        env:
+          DBT_USER: ${{ secrets.DBT_USER }}
+          DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+          DBT_ACCOUNT: ${{ secrets.DBT_ACCOUNT }}
+          DBT_ROLE: ${{ secrets.DBT_ROLE }}
+          DBT_DATABASE: ${{ secrets.DBT_DATABASE }}
+          DBT_SCHEMA: ${{ secrets.DBT_SCHEMA }}
+          DBT_WAREHOUSE: ${{ secrets.DBT_WAREHOUSE }}
+        run: |
+          dbt deps
+          dbt run
+          dbt test
