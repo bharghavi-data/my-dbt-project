@@ -32,7 +32,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install dbt-snowflake
 
-            - name: Create dbt profile
+      - name: Create dbt profile
         run: |
           mkdir -p ~/.dbt
           cat > ~/.dbt/profiles.yml <<EOF
@@ -54,5 +54,5 @@ jobs:
       - name: Run dbt
         run: |
           dbt debug
-          dbt deps
           dbt run
+          dbt test
