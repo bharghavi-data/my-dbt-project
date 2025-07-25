@@ -5,7 +5,8 @@ on:
     branches:
       - main
   schedule:
-    - cron: '*/5 * * * *'  # Runs daily at 3 AM UTC
+    - cron: '*/5 * * * *'  # Every 5 minutes UTC
+  workflow_dispatch:        # Allow manual triggering
 
 jobs:
   dbt-run:
@@ -27,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # Use a stable version like 3.11, not 3.13
+          python-version: '3.11'
 
       - name: Install dbt
         run: |
