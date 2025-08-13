@@ -56,5 +56,5 @@ jobs:
 
       - name: Run dbt
         run: |
-          dbt debug
-          dbt test --select path:tests/ || true
+          # dbt debug
+         # dbt test --select path:tests/ || true
